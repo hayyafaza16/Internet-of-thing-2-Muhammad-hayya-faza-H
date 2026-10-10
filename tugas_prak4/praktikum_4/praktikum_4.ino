@@ -3,15 +3,15 @@
 #include <ESPAsyncWebServer.h>
 #include <DHT.h>
 
-const char* ssid = "Sonnnn";
-const char* password = "12345678";
+const char* ssid = "Samsung";
+const char* password = "not my style";
 
 // Konfigurasi Pin
 const byte dhtPin = 2;        // D4 (GPIO 2)
 const byte buttonPin = 4;     // D2 (GPIO 4)
 const byte ledPin = 12;       // D6 (GPIO 12)
 
-DHT dht(dhtPin, DHT11);
+DHT dht(dhtPin, DHT22);
 
 // Variabel Pelacak Status (State & Cache)
 bool ledState = false;
