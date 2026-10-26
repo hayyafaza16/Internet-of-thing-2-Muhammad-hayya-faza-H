@@ -1,0 +1,200 @@
+[
+    {
+        "id": "9e42be329637dbbf",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c565a6a3f0d1f815",
+        "type": "mqtt-broker",
+        "name": "mosquitto local",
+        "broker": "mqtt",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "45e454b639fa3f81",
+        "type": "mqtt in",
+        "z": "9e42be329637dbbf",
+        "name": "",
+        "topic": "kampus/labiot/telemetri",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "c565a6a3f0d1f815",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 220,
+        "y": 140,
+        "wires": [
+            [
+                "f0efaa8e60726d67",
+                "e257891d5fd9ceb7"
+            ]
+        ]
+    },
+    {
+        "id": "f0efaa8e60726d67",
+        "type": "debug",
+        "z": "9e42be329637dbbf",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 420,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "60dd42a4112ac367",
+        "type": "switch",
+        "z": "9e42be329637dbbf",
+        "name": "",
+        "property": "payload.suhu",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gt",
+                "v": "31",
+                "vt": "str"
+            },
+            {
+                "t": "lte",
+                "v": "31",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 150,
+        "y": 280,
+        "wires": [
+            [
+                "5dedb90bc9c89727"
+            ],
+            [
+                "33f355a942601462"
+            ]
+        ]
+    },
+    {
+        "id": "5dedb90bc9c89727",
+        "type": "change",
+        "z": "9e42be329637dbbf",
+        "name": "Nyalakan LED Indikator",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{   \"led\": 1 }",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 130,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "33f355a942601462",
+        "type": "change",
+        "z": "9e42be329637dbbf",
+        "name": "Padamkan LED Indikator",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{   \"led\": 0 }",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 150,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cfd3c63e4be30c5a",
+        "type": "mqtt out",
+        "z": "9e42be329637dbbf",
+        "name": "",
+        "topic": "kampus/labiot/kendali",
+        "qos": "0",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "c565a6a3f0d1f815",
+        "x": 660,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "e257891d5fd9ceb7",
+        "type": "function",
+        "z": "9e42be329637dbbf",
+        "name": "function 1",
+        "func": "// Mengambil status LED sebelumnya dari context memori Node-RED (default: 0 / mati)\nlet state = context.get('ledState') || 0;\nlet temp = msg.payload.temp; // Mengambil data suhu dari payload masukan\n\n// Logika Histeresis\nif (temp > 31.5) {\n    state = 1; // Menyala jika suhu melebihi 31.5 C\n} else if (temp < 30.0) {\n    state = 0; // Padam jika suhu mendingin di bawah 30.0 C\n}\n// Jika suhu berada di antara 30.0 C dan 31.5 C, nilai 'state' tidak berubah (menahan status terakhir)\n\n// Menyimpan status LED terbaru ke memori context\ncontext.set('ledState', state);\n\n// Mengirimkan payload baru\nmsg.payload = { \"led\": state };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 240,
+        "wires": [
+            [
+                "cfd3c63e4be30c5a"
+            ]
+        ]
+    }
+]

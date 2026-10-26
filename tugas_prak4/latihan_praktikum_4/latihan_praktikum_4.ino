@@ -3,8 +3,8 @@
 #include <ESPAsyncWebServer.h>
 #include <DHT.h>
 
-const char* ssid = "FERDI KOST -EXT";
-const char* password = "modalngapa1";
+const char* ssid = "Haya";
+const char* password = "1111111q";
 
 // Konfigurasi Pin
 const byte dhtPin = 2;        // D4 (GPIO 2)
